@@ -1,4 +1,4 @@
--- 26.  Provide a query that shows the top 3 best selling artists.
+-- Provide a query that shows the top 3 best selling artists.
 
 SELECT TOP 3 a.Name ArtistName, COUNT(il.Quantity) ArtistSales
 FROM InvoiceLine il
