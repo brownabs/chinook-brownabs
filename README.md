@@ -1,5 +1,6 @@
 # Downloading the Database Files
 Click the download button from the Chinook Database github page.
+
 https://github.com/lerocha/chinook-database/blob/master/ChinookDatabase/DataSources/Chinook_SqlServer.sql
 
 # Moving the SQL File to Your Workspace
