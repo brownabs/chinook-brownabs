@@ -5,7 +5,7 @@ FROM Invoice
 WHERE YEAR(InvoiceDate) = 2009
 ;
 
---How many Invoices were there in 2009 and 2011
+--How many Invoices were there in 2009 and 2011 
 
 select NumberOfInvoices, InvoiceYear
 FROM (
