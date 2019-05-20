@@ -52,6 +52,13 @@ FROM Invoice i
 JOIN Customer c ON i.CustomerId = c.CustomerId
 JOIN Employee e on c.SupportRepId = e.EmployeeId
 
+-- 12. Provide a query that includes the purchased track name with each invoice line item
+
+SELECT il.InvoiceLineId, il.InvoiceId, il.TrackId InvoiceTrackId, il.UnitPrice, il.Quantity, t.Name TrackName, t.TrackId TrackId
+FROM InvoiceLine il
+JOIN Track t ON t.TrackId = il.TrackId
+ORDER BY il.InvoiceId;
+
 -- 13. Provide a query that includes the purchased track name AND artist name with each invoice line item.
 
 SELECT   i.InvoiceLineId, i.TrackId, i.UnitPrice, t.Name, ab.ArtistId, art.Name
@@ -59,3 +66,73 @@ From InvoiceLine i
 JOIN Track t ON i.TrackId = t.TrackId
 JOIN Album ab ON t.AlbumId = ab.AlbumId
 JOIN Artist art ON ab.ArtistId = art.ArtistId
+
+-- 14. Provide a query that shows the # of invoices per country. HINT: GROUP BY
+
+SELECT Count(InvoiceId) Invoices, BillingCountry
+FROM Invoice
+GROUP BY BillingCountry;
+
+-- 16. Provide a query that shows all the Tracks, but displays no IDs. The result should include the Album name, Media type and Genre.
+
+SELECT t.Name Track, a.Title AlbumName, g.Name Genre, mt.Name MediaType
+FROM Track t
+JOIN Album a ON a.AlbumId = t.AlbumId
+JOIN Genre g ON g.GenreId = t.GenreId
+JOIN MediaType mt ON mt.MediaTypeId = t.MediaTypeId
+
+-- 18. Provide a query that shows total sales made by each sales agent.
+
+SELECT CONCAT(e.FirstName, ' ', e.LastName) SalesAgent, totalSales.TotalSales
+FROM Employee e
+JOIN (
+   SELECT e.EmployeeId, SUM(i.Total) TotalSales
+   FROM Employee e
+   JOIN Customer c ON c.SupportRepId = e.EmployeeId
+   JOIN Invoice i ON i.CustomerId = c.CustomerId
+   GROUP BY e.EmployeeId
+) totalSales ON totalSales.EmployeeId = e.EmployeeId;
+
+
+-- 20. Which sales agent made the most in sales over all?
+
+SELECT TOP 1 CONCAT(e.FirstName, ' ', e.LastName) SalesAgent, totalSales.TotalSales
+FROM Employee e
+JOIN (
+   SELECT e.EmployeeId, SUM(i.Total) TotalSales
+   FROM Employee e
+   JOIN Customer c ON c.SupportRepId = e.EmployeeId
+   JOIN Invoice i ON i.CustomerId = c.CustomerId
+   GROUP BY e.EmployeeId
+) totalSales ON totalSales.EmployeeId = e.EmployeeId
+ORDER BY totalSales.TotalSales desc;
+
+
+-- 22. Provide a query that shows the total sales per country.
+
+SELECT BillingCountry Country, SUM(Total) TotalSales
+FROM Invoice
+GROUP BY BillingCountry;
+
+
+-- 24. Provide a query that shows the most purchased track of 2013
+
+SELECT TOP 1 t.Name TrackName, COUNT(il.TrackId) TrackSales
+   FROM InvoiceLine il
+   JOIN Invoice i ON i.InvoiceId = il.InvoiceId
+   JOIN Track t ON t.TrackId = il.TrackId
+   WHERE YEAR(i.InvoiceDate) = 2013
+   GROUP BY t.Name
+   ORDER BY TrackSales DESC
+
+-- 26. Provide a query that shows the top 3 best selling artists.
+
+SELECT TOP 3 a.Name ArtistName, COUNT(il.Quantity) SalesPerArtist
+FROM InvoiceLine il
+JOIN Invoice i ON il.InvoiceId = i.InvoiceId
+JOIN Track t ON il.TrackId = t.TrackId
+JOIN Album al ON al.AlbumId = t.AlbumId
+JOIN Artist a ON a.ArtistId = al.ArtistId
+GROUP BY a.Name
+ORDER BY SalesPerArtist DESC;
+
